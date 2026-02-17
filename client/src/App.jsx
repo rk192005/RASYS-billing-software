@@ -21,13 +21,27 @@ import PurchaseManager from './components/Purchases/PurchaseManager';
 import ClientManager from './components/Clients/ClientManager';
 import { API_BASE_URL } from './config';
 
+// Hook: useDebounce
+function useDebounce(value, delay) {
+  const [debouncedValue, setDebouncedValue] = useState(value);
+  useEffect(() => {
+    const handler = setTimeout(() => {
+      setDebouncedValue(value);
+    }, delay);
+    return () => {
+      clearTimeout(handler);
+    };
+  }, [value, delay]);
+  return debouncedValue;
+}
+
 function App() {
   // --- State ---
   const [activeTab, setActiveTab] = useState('dashboard');
   const [currentView, setCurrentView] = useState('list'); // 'list' or 'editor' for invoices
 
   const [currentInvoice, setCurrentInvoice] = useState(defaultInvoice);
-
+  const debouncedInvoice = useDebounce(currentInvoice, 500); // 500ms delay to stop typing lag
 
   const [settings, setSettings] = useState(printSettings);
   const [businessProfile, setBusinessProfile] = useState(defaultBusinessProfile);
@@ -483,7 +497,7 @@ function App() {
           </div>
         </div>
         <div style={{ flex: 1, overflow: 'auto', padding: '2rem', display: 'flex', justifyContent: 'center', background: '#334155' }}>
-          <InvoicePreview invoice={currentInvoice} settings={settings} businessProfile={businessProfile} />
+          <InvoicePreview invoice={debouncedInvoice} settings={settings} businessProfile={businessProfile} />
         </div>
       </div>
     </div>

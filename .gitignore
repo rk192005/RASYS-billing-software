@@ -26,3 +26,4 @@ dist
 # server/db.json
 # For now, we will track db.json so you have example data, but usually it is ignored.
 server/db.json
+server/db.json

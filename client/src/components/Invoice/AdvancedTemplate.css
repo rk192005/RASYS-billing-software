@@ -1,243 +1,256 @@
-/* Advanced Premium Invoice Template - "Zylker Style" */
-
+/* Premium Vyapar/Zoho Style Template */
 :root {
-    --invoice-accent: #2563eb;
-    /* Rasys Blue */
-    --invoice-bg: #ffffff;
-    --invoice-text: #0f172a;
-    /* Slate 900 */
-    --invoice-muted: #64748b;
-    /* Slate 500 */
-    --invoice-border: #e2e8f0;
-    /* Slate 200 */
+    --inv-primary: #1e3a8a;
+    /* Deep Corporate Blue */
+    --inv-secondary: #64748b;
+    /* Slate Gray */
+    --inv-border: #cbd5e1;
+    /* Light Border */
+    --inv-bg: #ffffff;
+    --inv-table-header: #f1f5f9;
+    /* Very light gray for header */
 }
 
 .invoice-paper {
-    background: white;
-    color: var(--invoice-text);
-    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+    background: var(--inv-bg);
+    color: #0f172a;
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
     margin: 0 auto;
-    padding: 40px 50px;
-    /* More padding for premium feel */
+    padding: 0;
+    /* Reset padding, will use inner container */
     position: relative;
-    font-family: 'Inter', sans-serif;
-    transition: width 0.3s, height 0.3s;
+    font-family: 'Inter', 'Roboto', sans-serif;
+    font-size: 14px;
+    /* Standard readable size */
+    line-height: 1.5;
+}
+
+/* Inner Content Container */
+.inv-container {
+    padding: 40px;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
 }
 
 /* Header Section */
 .inv-header {
     display: flex;
     justify-content: space-between;
-    margin-bottom: 3rem;
+    border-bottom: 2px solid var(--inv-primary);
+    padding-bottom: 20px;
+    margin-bottom: 20px;
 }
 
-.inv-logo-container {
-    margin-bottom: 1.5rem;
+.inv-logo-section {
+    display: flex;
+    align-items: flex-start;
+    gap: 15px;
 }
 
 .inv-logo {
-    width: 80px;
-    height: 80px;
+    width: 64px;
+    height: 64px;
     object-fit: contain;
-    border-radius: 50%;
-    /* Circular logo support */
+}
+
+.inv-company-info {
+    max-width: 300px;
 }
 
 .inv-company-name {
-    font-size: 1.25rem;
+    font-size: 1.5rem;
     font-weight: 700;
-    color: var(--invoice-accent);
-    margin-bottom: 0.5rem;
+    color: var(--inv-primary);
+    margin-bottom: 5px;
+    text-transform: uppercase;
 }
 
-.inv-meta-block {
+.inv-company-address {
+    font-size: 0.9rem;
+    color: var(--inv-secondary);
+    white-space: pre-line;
+}
+
+.inv-meta-section {
     text-align: right;
 }
 
 .inv-title {
-    font-size: 3rem;
-    font-weight: 300;
-    /* Thin, elegant title */
-    color: var(--invoice-accent);
+    font-size: 2rem;
+    font-weight: 800;
+    color: #e2e8f0;
+    /* Watermark style */
     text-transform: uppercase;
     line-height: 1;
-    margin-bottom: 0.5rem;
+    margin-bottom: 10px;
 }
 
-.inv-number {
-    font-size: 1rem;
-    font-weight: 600;
-    color: var(--invoice-text);
-    margin-bottom: 1.5rem;
-}
-
-.inv-balance-label {
-    font-size: 0.875rem;
-    color: var(--invoice-muted);
-    margin-bottom: 0.25rem;
-}
-
-.inv-balance-amount {
-    font-size: 1.75rem;
-    font-weight: 700;
-    color: var(--invoice-text);
-}
-
-/* Address & Info Grid */
-.inv-grid {
+.inv-meta-grid {
     display: grid;
-    grid-template-columns: 1fr 1fr 1fr;
-    gap: 2rem;
-    margin-bottom: 3rem;
+    grid-template-columns: auto auto;
+    gap: 5px 15px;
+    justify-content: end;
 }
 
-.inv-label {
-    font-size: 0.75rem;
-    color: var(--invoice-muted);
-    margin-bottom: 0.5rem;
+.inv-meta-label {
+    font-weight: 600;
+    color: var(--inv-secondary);
+    text-align: right;
+}
+
+.inv-meta-value {
+    font-weight: 500;
+    color: #0f172a;
+    text-align: right;
+}
+
+/* Client & Shipping Grid */
+.inv-address-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 40px;
+    margin-bottom: 30px;
+    background: #f8fafc;
+    padding: 15px;
+    border-radius: 4px;
+    border: 1px solid var(--inv-border);
+}
+
+.inv-address-block h3 {
+    font-size: 0.85rem;
+    font-weight: 700;
     text-transform: uppercase;
-    letter-spacing: 0.05em;
+    color: var(--inv-primary);
+    margin-bottom: 8px;
+    border-bottom: 1px solid var(--inv-border);
+    padding-bottom: 4px;
 }
 
 .inv-client-name {
-    font-size: 1.1rem;
     font-weight: 700;
-    color: var(--invoice-accent);
-    margin-bottom: 0.5rem;
+    font-size: 1.1rem;
+    margin-bottom: 4px;
 }
 
-.inv-address {
-    font-size: 0.9rem;
-    color: var(--invoice-muted);
-    line-height: 1.6;
-}
-
-.inv-dates {
-    text-align: right;
-    display: flex;
-    flex-direction: column;
-    gap: 0.5rem;
-}
-
-.inv-date-row {
-    display: flex;
-    justify-content: flex-end;
-    gap: 1rem;
-    margin-bottom: 0.5rem;
-    font-size: 0.9rem;
-}
-
-.inv-date-label {
-    color: var(--invoice-muted);
-    font-weight: 500;
-}
-
-.inv-date-value {
-    color: var(--invoice-text);
-    text-align: right;
-    min-width: 100px;
-}
-
-/* Table */
+/* Table - The Core "Premium" Part */
 .inv-table {
     width: 100%;
-    border-collapse: separate;
-    border-spacing: 0;
-    margin-bottom: 2rem;
-}
-
-.inv-table thead tr {
-    background-color: var(--invoice-accent);
-    color: white;
+    border-collapse: collapse;
+    margin-bottom: 20px;
 }
 
 .inv-table th {
-    padding: 0.75rem 1rem;
+    background-color: var(--inv-primary);
+    color: white;
     font-weight: 600;
-    font-size: 0.85rem;
     text-transform: uppercase;
-    letter-spacing: 0.05em;
+    font-size: 0.8rem;
+    padding: 10px 12px;
     text-align: left;
+    border: 1px solid var(--inv-primary);
 }
 
-.inv-table th:first-child {
-    border-top-left-radius: 4px;
-    border-bottom-left-radius: 4px;
-}
-
-.inv-table th:last-child {
-    border-top-right-radius: 4px;
-    border-bottom-right-radius: 4px;
+.inv-table th.text-right {
     text-align: right;
 }
 
-.inv-table td {
-    padding: 1rem 1rem;
-    border-bottom: 1px solid var(--invoice-border);
-    color: var(--invoice-text);
-    vertical-align: top;
+.inv-table th.text-center {
+    text-align: center;
 }
 
-.inv-table tr:last-child td {
-    border-bottom: none;
+.inv-table td {
+    padding: 10px 12px;
+    border: 1px solid var(--inv-border);
+    vertical-align: middle;
+    color: #334155;
+}
+
+/* Zebra Striping for Readability */
+.inv-table tr:nth-child(even) {
+    background-color: #f8fafc;
+}
+
+.inv-table-footer {
+    border-top: 2px solid var(--inv-primary);
 }
 
 /* Totals Section */
+.inv-footer-layout {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 0;
+}
+
+.inv-left-section {
+    flex: 1;
+    padding-right: 40px;
+}
+
+.inv-right-section {
+    width: 250px;
+}
+
 .inv-total-row {
     display: flex;
     justify-content: space-between;
-    padding: 0.5rem 0;
-    font-size: 0.9rem;
-    color: var(--invoice-text);
+    padding: 8px 0;
+    border-bottom: 1px dashed var(--inv-border);
 }
 
-.inv-total-row.final {
-    margin-top: 1rem;
-    font-size: 1.1rem;
-    font-weight: 700;
-    border-top: 1px solid var(--invoice-border);
-    padding-top: 1rem;
+.inv-total-row:last-child {
+    border-bottom: none;
 }
 
-/* Balance Bar */
-.inv-balance-bar {
-    background-color: var(--invoice-accent);
+.inv-grand-total {
+    background: var(--inv-primary);
     color: white;
-    padding: 0.75rem 1.5rem;
+    padding: 10px;
+    border-radius: 4px;
+    font-weight: 700;
+    font-size: 1.1rem;
     display: flex;
     justify-content: space-between;
-    align-items: center;
-    border-radius: 4px;
-    margin-top: 1rem;
+    margin-top: 10px;
 }
 
-/* Footer */
-.inv-footer {
-    margin-top: 4rem;
-    padding-top: 2rem;
-}
-
-.inv-notes-title {
-    font-size: 1rem;
-    font-weight: 600;
-    margin-bottom: 0.5rem;
-}
-
-.inv-notes-text {
+/* Additional Info (Bank, TOC) */
+.inv-info-box {
+    margin-top: 20px;
     font-size: 0.85rem;
-    color: var(--invoice-muted);
-    line-height: 1.6;
 }
 
-/* Paper Sizes overrides for this template */
-.paper-A4 .inv-title {
-    font-size: 2.5rem;
+.inv-info-title {
+    font-weight: 700;
+    color: var(--inv-primary);
+    margin-bottom: 5px;
 }
 
-.paper-A5 .inv-title {
-    font-size: 2rem;
+/* Signature */
+.inv-signature-area {
+    margin-top: 50px;
+    text-align: right;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+}
+
+.inv-signature-line {
+    width: 200px;
+    border-top: 1px solid #000;
+    margin-bottom: 5px;
+}
+
+.inv-signature-text {
+    font-size: 0.8rem;
+    font-weight: 600;
+}
+
+/* Paper Sizes */
+.paper-A4 {
+    padding: 0;
 }
 
 .paper-A5 {
-    padding: 30px;
+    font-size: 12px;
 }
