@@ -1,0 +1,15 @@
+{
+    "short_name": "Rasys",
+    "name": "Rasys Billing Software",
+    "icons": [
+        {
+            "src": "rasys-icon.png",
+            "sizes": "192x192 512x512",
+            "type": "image/png"
+        }
+    ],
+    "start_url": ".",
+    "display": "standalone",
+    "theme_color": "#2563eb",
+    "background_color": "#ffffff"
+}
