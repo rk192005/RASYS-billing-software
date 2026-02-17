@@ -116,14 +116,26 @@ export default function InvoicePreview({ invoice, settings, businessProfile }) {
                             </div>
                         </div>
 
-                        <div className="inv-info-box" style={{ marginTop: '20px' }}>
-                            <div className="inv-info-title">Bank Details</div>
-                            <div style={{ display: 'grid', gridTemplateColumns: 'auto 1fr', gap: '5px 15px', maxWidth: '300px', fontSize: '0.85rem' }}>
-                                <span style={{ color: '#64748b' }}>Bank Name:</span> <span>HDFC Bank</span>
-                                <span style={{ color: '#64748b' }}>A/C No:</span> <span>YOUR-ACC-NO</span>
-                                <span style={{ color: '#64748b' }}>IFSC:</span> <span>HDFC0001234</span>
+                        {/* Dynamic Bank Details */}
+                        {(businessProfile.bankName || businessProfile.accountNumber) ? (
+                            <div className="inv-info-box" style={{ marginTop: '20px' }}>
+                                <div className="inv-info-title">Bank Details</div>
+                                <div style={{ display: 'grid', gridTemplateColumns: 'auto 1fr', gap: '5px 15px', maxWidth: '350px', fontSize: '0.85rem' }}>
+                                    {businessProfile.bankName && <><span style={{ color: '#64748b' }}>Bank:</span> <span>{businessProfile.bankName}</span></>}
+                                    {businessProfile.accountNumber && <><span style={{ color: '#64748b' }}>A/C No:</span> <span>{businessProfile.accountNumber}</span></>}
+                                    {businessProfile.ifsc && <><span style={{ color: '#64748b' }}>IFSC:</span> <span>{businessProfile.ifsc}</span></>}
+                                    {businessProfile.branch && <><span style={{ color: '#64748b' }}>Branch/UPI:</span> <span>{businessProfile.branch}</span></>}
+                                </div>
                             </div>
-                        </div>
+                        ) : (
+                            /* Placeholder to show where it goes if empty */
+                            <div className="inv-info-box" style={{ marginTop: '20px', border: '1px dashed #cbd5e1', padding: '10px', borderRadius: '4px' }}>
+                                <div className="inv-info-title" style={{ color: '#94a3b8' }}>Bank Details</div>
+                                <div style={{ fontSize: '0.8rem', color: '#94a3b8', fontStyle: 'italic' }}>
+                                    Add your Bank Account, IFSC, & UPI details in <strong>Settings</strong> to display them here.
+                                </div>
+                            </div>
+                        )}
                     </div>
 
                     {/* Right: Totals & Signature */}

@@ -353,6 +353,30 @@ function App() {
           </div>
         </div>
       </div>
+
+      <div className="dashboard-card" style={{ marginBottom: '2rem' }}>
+        <h2 style={{ fontSize: '1.1rem', marginBottom: '1.5rem', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+          <Settings size={20} /> Bank Details (For Invoice)
+        </h2>
+        <div className="grid-cols-2">
+          <div>
+            <label>Bank Name</label>
+            <input placeholder="e.g. HDFC Bank" value={businessProfile.bankName || ''} onChange={e => saveSettingsToBackend({ ...businessProfile, bankName: e.target.value })} />
+          </div>
+          <div>
+            <label>Account Number</label>
+            <input placeholder="XXXX-XXXX-XXXX" value={businessProfile.accountNumber || ''} onChange={e => saveSettingsToBackend({ ...businessProfile, accountNumber: e.target.value })} />
+          </div>
+          <div>
+            <label>IFSC Code</label>
+            <input placeholder="e.g. HDFC000123" value={businessProfile.ifsc || ''} onChange={e => saveSettingsToBackend({ ...businessProfile, ifsc: e.target.value })} />
+          </div>
+          <div>
+            <label>Branch / UPI ID</label>
+            <input placeholder="Branch Name or UPI ID" value={businessProfile.branch || ''} onChange={e => saveSettingsToBackend({ ...businessProfile, branch: e.target.value })} />
+          </div>
+        </div>
+      </div>
       <div style={{ marginTop: '3rem', textAlign: 'center' }}>
         <button onClick={() => { if (confirm("Clear local data?")) window.location.reload(); }} style={{ color: '#ef4444', background: 'none', fontSize: '0.85rem', display: 'flex', alignItems: 'center', gap: '0.5rem', margin: '0 auto' }}>
           <Trash2 size={16} /> Reset Local Cache

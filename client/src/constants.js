@@ -24,7 +24,11 @@ export const businessProfile = {
     phone: "",
     email: "",
     gstin: "",
-    logo: null
+    logo: null,
+    bankName: "",
+    accountNumber: "",
+    ifsc: "",
+    branch: ""
 };
 
 export const printSettings = {
