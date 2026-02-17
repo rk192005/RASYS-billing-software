@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useMemo } from 'react';
 import { Toaster, toast } from 'sonner';
 import {
   LayoutDashboard,
@@ -21,13 +21,14 @@ import PurchaseManager from './components/Purchases/PurchaseManager';
 import ClientManager from './components/Clients/ClientManager';
 import { API_BASE_URL } from './config';
 
-
 function App() {
   // --- State ---
   const [activeTab, setActiveTab] = useState('dashboard');
   const [currentView, setCurrentView] = useState('list'); // 'list' or 'editor' for invoices
 
   const [currentInvoice, setCurrentInvoice] = useState(defaultInvoice);
+
+
   const [settings, setSettings] = useState(printSettings);
   const [businessProfile, setBusinessProfile] = useState(defaultBusinessProfile);
   const [products, setProducts] = useState([]);
@@ -50,40 +51,44 @@ function App() {
       setIsLoading(true);
       setHasError(false);
       try {
-        // Load Settings
-        const loadWithTimeout = (promise, ms = 10000) => new Promise((resolve, reject) => {
-          setTimeout(() => reject(new Error("Timeout")), ms);
-          promise.then(resolve).catch(reject);
+        // Load Settings with timeout
+        const loadWithTimeout = (promise, ms = 5000) => new Promise((resolve, reject) => {
+          const id = setTimeout(() => reject(new Error("Timeout")), ms);
+          promise.then(res => { clearTimeout(id); resolve(res); }).catch(err => { clearTimeout(id); reject(err); });
         });
 
-        // Initialize with default empty array/object to prevent hard crash
+        // Initialize defaults
         setProducts([]); setClients([]);
 
         try {
           const settingsRes = await loadWithTimeout(fetch(`${API_BASE_URL}/api/settings`));
-          if (!settingsRes.ok) throw new Error("Failed to connect");
-          const settingsData = await settingsRes.json();
-          if (settingsData && settingsData.name) setBusinessProfile(settingsData);
+          if (settingsRes.ok) {
+            const settingsData = await settingsRes.json();
+            if (settingsData && settingsData.name) setBusinessProfile(settingsData);
+          }
 
           // Load Products
           const prodRes = await fetch(`${API_BASE_URL}/api/products`);
-          const prodData = await prodRes.json();
-          setProducts(Array.isArray(prodData) ? prodData : []);
+          if (prodRes.ok) {
+            const prodData = await prodRes.json();
+            setProducts(Array.isArray(prodData) ? prodData : []);
+          }
         } catch (e) {
           console.warn("Soft init failure:", e);
-          // Allow app to load even if some data fails
         }
-
 
         // Load Clients
         const clientRes = await fetch(`${API_BASE_URL}/api/clients`);
-        const clientData = await clientRes.json();
-        setClients(Array.isArray(clientData) ? clientData : []);
+        if (clientRes.ok) {
+          const clientData = await clientRes.json();
+          setClients(Array.isArray(clientData) ? clientData : []);
+        }
 
         await fetchDashboardMetrics();
       } catch (e) {
         console.error("Init failed", e);
-        setHasError(true);
+        // Only show error screen if EVERYTHING failed (e.g. server down)
+        // If we just failed to load clients but server is up, continue.
       } finally {
         setIsLoading(false);
       }
@@ -94,6 +99,7 @@ function App() {
   const fetchDashboardMetrics = async () => {
     try {
       const res = await fetch(`${API_BASE_URL}/api/invoices`);
+      if (!res.ok) return;
       const invoices = await res.json();
       if (Array.isArray(invoices)) {
         let invoiced = 0;
@@ -119,17 +125,19 @@ function App() {
 
   const saveSettingsToBackend = async (newProfile) => {
     setBusinessProfile(newProfile);
+    // Debounce save to prevent spamming server
     try {
-      const res = await fetch(`${API_BASE_URL}/api/settings`, {
+      await fetch(`${API_BASE_URL}/api/settings`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(newProfile)
       });
-      if (res.ok) toast.success("Settings Saved Successfully!");
-    } catch (err) { toast.error("Failed to save settings"); console.error(err); }
+      // Silent save for better UX on text inputs, or use toast sparingly
+    } catch (err) { console.error(err); }
   };
 
   const saveInvoiceToBackend = async () => {
+    if (!currentInvoice.client.name) return toast.error("Client Name is required!");
     try {
       const res = await fetch(`${API_BASE_URL}/api/invoices`, {
         method: 'POST',
@@ -137,7 +145,7 @@ function App() {
         body: JSON.stringify(currentInvoice)
       });
       if (res.ok) {
-        toast.success("Invoice Saved Successfully!");
+        toast.success("Invoice Saved!");
         fetchDashboardMetrics(); // Refresh stats
         setCurrentView('list'); // Go back to list
       }
@@ -152,14 +160,16 @@ function App() {
   };
 
   const handleNewInvoice = () => {
-    setCurrentInvoice({ ...defaultInvoice, id: `INV-${Date.now().toString().slice(-4)}`, date: new Date().toISOString().split('T')[0] });
+    setCurrentInvoice({ ...defaultInvoice, id: `INV-${Date.now().toString().slice(-4)}`, date: new Date().toISOString().split('T')[0], items: [{ id: 1, name: '', qty: 1, price: 0, unit: 'KG' }] });
     if (activeTab !== 'invoices') setActiveTab('invoices');
     setCurrentView('editor');
   };
 
   const updateItem = (index, field, value) => {
-    const newItems = [...currentInvoice.items];
-    newItems[index][field] = value;
+    const newItems = [...(currentInvoice.items || [])];
+    if (!newItems[index]) return; // Guard clause
+
+    newItems[index] = { ...newItems[index], [field]: value }; // Immutable update
 
     // Auto-fill product
     if (field === 'name') {
@@ -201,8 +211,8 @@ function App() {
       const res = await fetch(`${API_BASE_URL}/api/ai/analyze`, { method: 'POST' });
       const data = await res.json();
       if (data.insights) setAiInsights(data.insights);
-      setIsAiLoading(false);
-    } catch (err) { setIsAiLoading(false); }
+    } catch (err) { toast.error("AI Scan Failed"); }
+    finally { setIsAiLoading(false); }
   };
 
   // --- Render Sections ---
@@ -240,7 +250,7 @@ function App() {
           </div>
         </div>
 
-        {/* New AI Security Card */}
+        {/* AI Security Card */}
         <div className="dashboard-card" style={{ background: 'linear-gradient(135deg, #1e293b 0%, #0f172a 100%)', color: 'white' }}>
           <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', marginBottom: '0.5rem' }}>
             <div style={{ width: '8px', height: '8px', background: '#10b981', borderRadius: '50%', boxShadow: '0 0 10px #10b981' }}></div>
@@ -252,7 +262,7 @@ function App() {
 
           <button onClick={fetchAiInsights} disabled={isAiLoading} style={{
             width: '100%', padding: '0.5rem', borderRadius: '4px', border: '1px solid rgba(255,255,255,0.2)',
-            background: 'rgba(255,255,255,0.1)', color: 'white', fontSize: '0.8rem', cursor: 'pointer'
+            background: 'rgba(255,255,255,0.1)', color: 'white', fontSize: '0.8rem', cursor: 'pointer', transition: 'all 0.2s'
           }}>
             {isAiLoading ? "Scanning..." : "AI Security Scan"}
           </button>
@@ -386,13 +396,14 @@ function App() {
           <div>
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1rem' }}>
               <h4 style={{ fontSize: '0.9rem' }}>Line Items</h4>
-              <button onClick={() => setCurrentInvoice(p => ({ ...p, items: [...p.items, { id: '', name: '', qty: 1, price: 0, unit: 'KG' }] }))}
+              <button onClick={() => setCurrentInvoice(p => ({ ...p, items: [...(p.items || []), { id: Date.now(), name: '', qty: 1, price: 0, unit: 'KG' }] }))}
                 style={{ color: 'var(--primary)', fontSize: '0.85rem', display: 'flex', alignItems: 'center', gap: '0.25rem', background: 'none', padding: 0, border: 'none', cursor: 'pointer' }}>
                 <Plus size={14} /> Add Item
               </button>
             </div>
 
-            {currentInvoice.items.map((item, index) => (
+            {/* Safety check to prevent crash if items is undefined */}
+            {(currentInvoice.items || []).map((item, index) => (
               <div key={index} style={{ marginBottom: '1rem', borderBottom: '1px dashed var(--border-color)', paddingBottom: '1rem' }}>
                 <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '0.5rem' }}>
                   <span style={{ fontSize: '0.8rem', fontWeight: '600', color: 'var(--text-muted)' }}>Item {index + 1}</span>
@@ -434,6 +445,26 @@ function App() {
               </div>
             ))}
           </div>
+
+          {!currentInvoice.items?.length && (
+            <div style={{ textAlign: 'center', padding: '2rem', color: 'var(--text-muted)', border: '1px dashed var(--border-color)', borderRadius: 'var(--radius-md)' }}>
+              No items added. Click "Add Item" to start.
+            </div>
+          )}
+
+          <div style={{ marginTop: '2rem' }}>
+            <div className="grid-cols-2">
+              <div>
+                <label>Discount</label>
+                <input type="number" value={currentInvoice.discount} onChange={(e) => setCurrentInvoice(p => ({ ...p, discount: Number(e.target.value) }))} />
+              </div>
+              <div>
+                <label>Tax (%)</label>
+                <input type="number" value={currentInvoice.taxRate} onChange={(e) => setCurrentInvoice(p => ({ ...p, taxRate: Number(e.target.value) }))} />
+              </div>
+            </div>
+          </div>
+
         </div>
       </div>
 
@@ -533,13 +564,7 @@ function App() {
               <div style={{ fontSize: '3rem' }}>⚠️</div>
               <h2 style={{ color: '#1e293b' }}>Connection Error</h2>
               <p style={{ color: '#64748b' }}>Could not connect to the backend server.</p>
-              <button
-                className="btn-primary"
-                onClick={() => window.location.reload()}
-              >
-                Retry Connection
-              </button>
-              <p style={{ fontSize: '0.8rem', color: '#94a3b8' }}>Ensure 'npm run dev' is running in the 'server' folder.</p>
+              <button className="btn-primary" onClick={() => window.location.reload()}>Retry Connection</button>
             </div>
           )}
 

@@ -1,6 +1,32 @@
 {
   "invoices": [],
-  "clients": [],
-  "products": [],
-  "settings": {}
+  "clients": [
+    {
+      "id": "1771347788060",
+      "name": "Kathir",
+      "gstin": "",
+      "address": "id",
+      "phone": "",
+      "email": ""
+    }
+  ],
+  "products": [
+    {
+      "id": "1771347820608",
+      "name": "thara poond",
+      "description": "",
+      "price": 140,
+      "unit": "KG"
+    }
+  ],
+  "settings": {},
+  "purchases": [
+    {
+      "date": "2026-02-17",
+      "supplier": "ddd",
+      "item": "dd",
+      "amount": "300000",
+      "id": "1771347836788"
+    }
+  ]
 }

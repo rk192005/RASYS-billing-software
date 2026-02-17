@@ -3,9 +3,17 @@ import { printSettings, defaultInvoice } from '../../constants';
 import './AdvancedTemplate.css'; // Use the new advanced styles
 
 // Replicating "Zylker Design Labs" Style
+// Replicating "Zylker Design Labs" Style
 export default function InvoicePreview({ invoice, settings, businessProfile }) {
-    const { items, taxRate, discount } = invoice;
-    const subtotal = items.reduce((sum, item) => sum + (item.qty * item.price), 0);
+    if (!invoice) return <div>No Invoice Data</div>;
+
+    // Defensive defaults
+    const items = Array.isArray(invoice.items) ? invoice.items : [];
+    const taxRate = Number(invoice.taxRate) || 0;
+    const discount = Number(invoice.discount) || 0;
+    const client = invoice.client || {};
+
+    const subtotal = items.reduce((sum, item) => sum + ((Number(item.qty) || 0) * (Number(item.price) || 0)), 0);
     const tax = subtotal * (taxRate / 100);
     const total = subtotal + tax - discount;
 
@@ -54,18 +62,18 @@ export default function InvoicePreview({ invoice, settings, businessProfile }) {
             <div className="inv-grid">
                 <div>
                     <div className="inv-label">Bill To</div>
-                    <div className="inv-client-name">{invoice.client.name}</div>
+                    <div className="inv-client-name">{client.name || 'Select Client'}</div>
                     <div className="inv-address" style={{ whiteSpace: 'pre-line' }}>
-                        {invoice.client.address}
+                        {client.address || ''}
                     </div>
                 </div>
 
                 {/* Optional Ship To (using Bill To for now if no separate field, keeping UI consistent) */}
                 <div>
                     <div className="inv-label">Ship To</div>
-                    <div className="inv-client-name">{invoice.client.name}</div>
+                    <div className="inv-client-name">{client.name || ''}</div>
                     <div className="inv-address" style={{ whiteSpace: 'pre-line' }}>
-                        {invoice.client.address}
+                        {client.address || ''}
                     </div>
                 </div>
 
