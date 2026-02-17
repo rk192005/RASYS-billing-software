@@ -1,0 +1,253 @@
+/* Base Layout - Zoho Style */
+.layout {
+    display: flex;
+    height: 100vh;
+    overflow: hidden;
+    background-color: var(--bg-dark);
+    font-family: var(--font-sans);
+}
+
+/* Sidebar - Professional Gray/White */
+.sidebar {
+    width: 240px;
+    background: #ffffff;
+    border-right: 1px solid var(--border-color);
+    display: flex;
+    flex-direction: column;
+    padding: 1.25rem 0.5rem;
+    z-index: 50;
+    box-shadow: 2px 0 10px rgba(0, 0, 0, 0.03);
+}
+
+.sidebar-logo {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    margin-bottom: 2rem;
+    padding: 0 1rem;
+}
+
+.sidebar-menu {
+    display: flex;
+    flex-direction: column;
+    gap: 0.25rem;
+}
+
+.menu-item {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    padding: 0.6rem 1rem;
+    border-radius: var(--radius-sm);
+    color: var(--text-muted);
+    text-decoration: none;
+    font-weight: 500;
+    font-size: 0.9rem;
+    transition: all 0.2s;
+    background: transparent;
+    width: 100%;
+    border: none;
+    text-align: left;
+}
+
+.menu-item:hover {
+    background: #f1f5f9;
+    color: var(--text-main);
+}
+
+.menu-item.active {
+    background: rgba(64, 141, 251, 0.1);
+    color: var(--primary);
+}
+
+/* Main Content Area */
+.main-wrapper {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    height: 100vh;
+    overflow: hidden;
+}
+
+.top-header {
+    height: 56px;
+    border-bottom: 1px solid var(--border-color);
+    background: #ffffff;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 1.5rem;
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.03);
+}
+
+.content-area {
+    flex: 1;
+    padding: 1.5rem;
+    overflow-y: auto;
+    background-color: #f1f5f9;
+}
+
+/* Dashboard Cards - Zoho Style */
+.dashboard-card {
+    background: white;
+    border: 1px solid var(--border-color);
+    border-radius: 6px;
+    padding: 1.25rem;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+}
+
+.dashboard-stat-label {
+    font-size: 0.85rem;
+    font-weight: 600;
+    color: var(--text-muted);
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    margin-bottom: 0.5rem;
+}
+
+.dashboard-stat-value {
+    font-size: 1.75rem;
+    font-weight: 700;
+    color: var(--text-main);
+}
+
+/* Print Optimization */
+@media print {
+
+    .sidebar,
+    .top-header,
+    .no-print {
+        display: none !important;
+    }
+
+    .layout,
+    .main-wrapper,
+    .content-area {
+        display: block !important;
+        height: auto !important;
+        overflow: visible !important;
+        padding: 0 !important;
+        background: white !important;
+    }
+}
+
+/* Screen Preview Styles for the Invoice Paper */
+.invoice-paper {
+    background: white;
+    color: #1e293b;
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+    margin: 0 auto;
+    padding: 40px;
+    position: relative;
+    overflow: hidden;
+    transition: width 0.3s, height 0.3s;
+}
+
+/* Paper Dimensions for Screen Preview */
+.paper-A4 {
+    width: 210mm;
+    min-height: 297mm;
+}
+
+.paper-A4-landscape {
+    width: 297mm;
+    min-height: 210mm;
+}
+
+.paper-A5 {
+    width: 148mm;
+    min-height: 210mm;
+}
+
+.paper-A5-landscape {
+    width: 210mm;
+    min-height: 148mm;
+}
+
+/* Invoice Specific Utilities */
+.invoice-header {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 2rem;
+    border-bottom: 2px solid #e2e8f0;
+    padding-bottom: 1.5rem;
+}
+
+.invoice-logo {
+    max-width: 150px;
+    max-height: 80px;
+    object-fit: contain;
+}
+
+.invoice-title {
+    font-size: 2.5rem;
+    font-weight: 800;
+    color: #3b82f6;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    line-height: 1;
+}
+
+.invoice-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 2rem;
+    margin-bottom: 2rem;
+}
+
+.invoice-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-bottom: 2rem;
+}
+
+.invoice-table th {
+    background: #f1f5f9;
+    color: #475569;
+    font-weight: 600;
+    text-transform: uppercase;
+    font-size: 0.75rem;
+    letter-spacing: 0.05em;
+    padding: 0.75rem 1rem;
+    text-align: left;
+}
+
+.invoice-table td {
+    padding: 0.75rem 1rem;
+    border-bottom: 1px solid #e2e8f0;
+    color: #334155;
+}
+
+.invoice-table tr:last-child td {
+    border-bottom: none;
+}
+
+.invoice-total-section {
+    display: flex;
+    justify-content: flex-end;
+}
+
+.total-row {
+    display: flex;
+    justify-content: space-between;
+    width: 300px;
+    padding: 0.5rem 0;
+    color: #64748b;
+}
+
+.total-row.final {
+    border-top: 2px solid #e2e8f0;
+    padding-top: 1rem;
+    color: #0f172a;
+    font-weight: 700;
+    font-size: 1.25rem;
+}
+
+.invoice-footer {
+    margin-top: 3rem;
+    padding-top: 2rem;
+    border-top: 1px solid #e2e8f0;
+    text-align: center;
+    color: #94a3b8;
+    font-size: 0.875rem;
+}
